@@ -18,47 +18,21 @@ class CountConnections implements SystemTagInterface
      * @throws \Exception
      */
     static function generateFor(SystemModel $targetSystem, SystemModel $sourceSystem, MapModel $map) : ?string
-    {                       
-        // set target class for new system being added to the map
-        $targetClass = $targetSystem->security;
-        
-        // Get all systems from active map
-        $systems = $map->getSystemsData();
-                
-        // empty array to append tags to,        
-        // iterate over systems and append tag to $tags if security matches targetSystem security 
-        // and it is not our home (locked)
-        $tags = array();
-        foreach ($systems as $system) {
-            if ($system->security === $targetClass && !$system->locked && $system->tag) {
-                array_push($tags, SystemTag::tagToInt($system->tag));
-            }
-        };
+    {
+        $whConnections = array_filter($sourceSystem->getConnections(), function (ConnectionModel $connection) {
+            return $connection->isWormhole();
+        });
+        $countWhConnections = count($whConnections);
 
-        // try to assign "s(tatic)" tag to connections from our home by checking if source is locked, 
-        // if dest is static, and finally if "s" (18) tag is already taken
-        if ($sourceSystem->locked){
-            if($targetClass == "C5" || $targetClass == "0.0" ){
-                if(!in_array(18, $tags)) {
-                    return 's';
-                }
-            }
+        // If the source system is locked and has statics we assume it's our home always start from one when the source is locked
+        $statics = $sourceSystem->get_statics();
+        if($sourceSystem->locked && is_array($statics) && count($statics)) {
+            return $countWhConnections + 1;
         }
 
-        // return 'a' if array is empty
-        if (count($tags) === 0) {            
-            return 'a';
-        }
-
-        // sort and uniq tags array and iterate to return first empty value 
-        sort($tags);
-        $tags = array_unique($tags);           
-        $i = 0;
-        while($tags[$i] == $i) {
-            $i++;
-        }
-        
-        $char = SystemTag::intToTag($i);        
-        return $char;
+        // New connection did not start in "home" -> tag by counting connections
+        // Dont +1 because we don't want to count one "incoming" connection
+        // But never use 0 (e.g. when a new chain is opened from a K-space system)
+        return max($countWhConnections, 1);                       
     }
 }
