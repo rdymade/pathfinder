@@ -257,10 +257,10 @@ define([
 
     let getSystemSecurityForDisplay = (security) => {
         const securityMapping = {
-            '0.0': 'ns',
-            'L': 'ls',
-            'H': 'hs',
-            'T': 'tr'
+            '0.0': 'NS',
+            'L': 'LS',
+            'H': 'HS',
+            'T': 'TR'
         };
         return securityMapping.hasOwnProperty(security) ? securityMapping[security] : security;
     };
@@ -280,9 +280,9 @@ define([
             var sec = security;
         }
         const securityMapping = {
-            'ns': '0.0',
-            'ls': 'L',
-            'hs': 'H',
+            'NS': '0.0',
+            'LS': 'L',
+            'HS': 'H',
         }
         return securityMapping.hasOwnProperty(sec) ? securityMapping[sec] : sec.toUpperCase();
     }

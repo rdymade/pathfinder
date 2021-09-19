@@ -447,12 +447,12 @@ define([
                     class: config.systemHeadClass
                 }).append(
                     $('<span>', {
-                        class: [config.systemSec, secClass].join(' '),
-                        text: MapUtil.getSystemSecurityForDisplay(data.security).toLowerCase()
-                    }),
-                    $('<span>', {
                         class: [config.systemHeadTagClass, secClass].join(' ')
                     }).attr('data-value', data.tag),
+                    $('<span>', {
+                        class: [config.systemSec, secClass].join(' '),
+                        text: MapUtil.getSystemSecurityForDisplay(data.security)
+                    }),
                     // System name is editable
                     $('<span>', {
                         class: systemHeadClasses.join(' '),
