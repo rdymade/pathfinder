@@ -26,8 +26,10 @@ class CountConnections implements SystemTagInterface
 
         // If the source system is locked and has statics we assume it's our home always start from one when the source is locked
         $statics = $sourceSystem->get_statics();
-        if($sourceSystem->locked && is_array($statics) && count($statics)) {
-            return $countWhConnections + 1;
+	if($sourceSystem->locked && is_array($statics) && count($statics)) {
+	    if($targetSystem->security == "C5") {
+		return 1; // always return 1 for C5's from "Home"
+	    }
         }
 
         // New connection did not start in "home" -> tag by counting connections
